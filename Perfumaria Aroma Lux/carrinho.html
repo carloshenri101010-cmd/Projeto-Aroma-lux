@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aroma Lux - Seu Carrinho e Checkout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="carrinho.css"> 
+</head>
+<body class="min-h-screen">
+    <header class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-800">Aroma Lux</div>
+            <nav class="space-x-4 header-nav">
+                <a href="index.html" class="text-gray-600 hover:text-gray-900">Home</a>
+                <a href="masculino.html" class="text-gray-600 hover:text-gray-900">Masculino</a>
+                <a href="feminino.html" class="text-gray-600 hover:text-gray-900">Feminino</a>
+                <a href="presentes.html" class="text-gray-600 hover:text-gray-900">presentes e Promoções</a>
+                <a href="#" class="active text-lg">
+                    🛒 Carrinho (<span id="cart-count">0</span>)
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-content max-w-7xl mx-auto p-4 lg:p-8">
+        <h1 class="text-3xl font-bold mb-2">🛒 Seu Carrinho e Finalização</h1>
+        <p class="text-gray-600 mb-8">Revise seu pedido, aplique seu cupom e escolha a melhor forma de pagamento.</p>
+
+        <section class="checkout-grid">
+            
+            <!-- COLUNA 1: ITENS DO CARRINHO E TOTAIS -->
+            <div class="bg-white p-6 rounded-xl shadow-lg lg:order-1 order-2">
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Itens no Carrinho</h2>
+                
+                <!-- AQUI O JS IRÁ INSERIR OS PRODUTOS (IMAGEM E PREÇO) -->
+                <div id="cart-items-container">
+                    <!-- Conteúdo será gerado pelo JS (renderCartItems) -->
+                    <p style="text-align: center;">Carregando itens...</p>
+                </div>
+                
+                <hr class="my-6">
+
+                <!-- ÁREA DO CUPOM -->
+                <div class="cupom-manual-box p-4 bg-purple-50 rounded-lg">
+                    <h4 class="font-semibold mb-2">Aplicar Cupom de Desconto:</h4>
+                    <div class="flex space-x-2">
+                        <input type="text" placeholder="AROMALUX15" id="checkoutCupomInput" class="p-2 border rounded flex-grow focus:outline-none focus:ring-2 focus:ring-purple-500" onkeyup="this.value = this.value.toUpperCase()">
+                        <button class="btn-apply-cupom bg-purple-600 text-white p-2 rounded hover:bg-purple-700 transition" onclick="applyCouponToCheckout()">Aplicar</button>
+                    </div>
+                    <p id="cupom-status" class="cupom-tip text-sm mt-1 text-gray-500">Nenhum cupom aplicado.</p>
+                </div>
+
+                <!-- TOTAIS FINAIS -->
+                <div class="cart-totals">
+                    <div class="total-line">
+                        <span>Subtotal:</span>
+                        <!-- ID SUBTOTTAL ADICIONADO PARA O CÁLCULO -->
+                        <span id="subtotal">R$ 0,00</span> 
+                    </div>
+                    <div class="total-line text-red-500 font-medium">
+                        <span>Desconto (Cupom):</span>
+                        <span id="discount-amount">- R$ 0,00</span>
+                    </div>
+                    <div class="total-line">
+                        <span>Frete:</span>
+                        <span id="shipping-cost">R$ 0,00</span>
+                    </div>
+                    <div class="total-line final-total mt-4 pt-4 border-t border-gray-200">
+                        <span class="text-xl">Total a Pagar:</span>
+                        <!-- ID FINAL-TOTAL (QUE O JS TAMBÉM PODE USAR) -->
+                        <span id="final-total" class="text-xl font-bold">R$ 0,00</span> 
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUNA 2: FORMULÁRIO DE CHECKOUT -->
+            <div class="checkout-form bg-white p-6 rounded-xl shadow-lg lg:order-2 order-1 h-fit">
+                <h2 class="text-xl font-semibold mb-6 border-b pb-2">Detalhes do Checkout</h2>
+                
+                <div id="checkout-success" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <h3 class="font-bold">🎉 Pedido Feito com Sucesso!</h3>
+                    <p class="text-sm">Obrigado por comprar na Aroma Lux! Seu pedido será processado.</p>
+                </div>
+                
+                <h3 class="font-semibold text-lg mb-3 text-purple-700">1. Informações Pessoais e Entrega</h3>
+                <form id="personal-form" class="space-y-3">
+                    <input type="text" placeholder="Nome Completo" required class="w-full p-2 border rounded">
+                    <input type="email" placeholder="E-mail" required class="w-full p-2 border rounded">
+                    <input type="text" placeholder="CPF" required class="w-full p-2 border rounded">
+                    <input type="text" placeholder="CEP" required class="w-full p-2 border rounded">
+                    <input type="text" placeholder="Endereço (Rua, Número)" required class="w-full p-2 border rounded">
+                    <input type="text" placeholder="Cidade / Estado" required class="w-full p-2 border rounded">
+                </form>
+
+                <h3 class="font-semibold text-lg mt-6 mb-3 text-purple-700">2. Forma de Pagamento</h3>
+                <div class="payment-options space-y-2">
+                    <label class="flex items-center space-x-2 p-2 border rounded cursor-pointer bg-purple-50">
+                        <input type="radio" name="payment-method" value="pix" checked>
+                        <i class="fas fa-qrcode text-purple-600"></i> <span class="font-medium">Pix</span> (10% OFF no total)
+                    </label>
+                    <label class="flex items-center space-x-2 p-2 border rounded cursor-pointer">
+                        <input type="radio" name="payment-method" value="boleto">
+                        <i class="fas fa-barcode text-purple-600"></i> <span class="font-medium">Boleto Bancário</span> (10% OFF no total)
+                    </label>
+                    <label class="flex items-center space-x-2 p-2 border rounded cursor-pointer">
+                        <input type="radio" name="payment-method" value="credito">
+                        <i class="fas fa-credit-card text-purple-600"></i> <span class="font-medium">Cartão de Crédito</span> (até 6x sem juros)
+                    </label>
+                </div>
+
+                <div id="card-form-area" class="mt-4 p-3 border rounded-lg bg-gray-50 hidden">
+                    <h4 class="font-semibold mb-2">Dados do Cartão</h4>
+                    <form id="card-form" class="space-y-2">
+                        <input type="text" placeholder="Nome impresso no cartão" required class="w-full p-2 border rounded">
+                        <input type="text" placeholder="Número do Cartão" required minlength="16" maxlength="16" class="w-full p-2 border rounded">
+                        <div class="flex space-x-2">
+                            <input type="text" placeholder="MM/AA" required maxlength="5" class="w-1/3 p-2 border rounded">
+                            <input type="text" placeholder="CVV" required minlength="3" maxlength="4" class="w-1/3 p-2 border rounded">
+                            <select required class="w-1/3 p-2 border rounded">
+                                <option value="">Parcelas</option>
+                                <option value="1">1x sem juros</option>
+                                <option value="6">6x sem juros</option>
+                                <option value="12">12x com juros</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                
+                <button class="btn-primary btn-finalizar w-full py-3 mt-6 rounded-lg text-lg font-semibold" onclick="finalizeOrder()">
+                    <i class="fas fa-lock mr-2"></i> Finalizar Pedido
+                </button>
+                <p class="text-sm text-gray-500 mt-2 text-center">Pagamento seguro e protegido.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-4 mt-10">
+        <p>&copy; 2025 Aroma Lux. Todos os direitos reservados.</p>
+    </footer>
+    <a href="https://wa.me/55XXYYYYYYYYY" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+       <script src="carrinho.js"></script>
+</body>
+</html>
